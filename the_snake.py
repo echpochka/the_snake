@@ -26,6 +26,12 @@ SNAKE_COLOR = (0, 255, 0)
 # Скорость движения змейки (FPS):
 FPS = 10
 
+# Инициализация pygame и создание экрана
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Змейка')
+clock = pygame.time.Clock()
+
 
 class GameObject:
     """Базовый класс для всех игровых объектов."""
@@ -137,7 +143,6 @@ def handle_keys(snake):
     """Обрабатывает нажатия клавиш."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
             return False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and snake.direction != DOWN:
@@ -153,11 +158,6 @@ def handle_keys(snake):
 
 def main():
     """Основная функция игры."""
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption('Змейка')
-
-    clock = pygame.time.Clock()
     snake = Snake()
     apple = Apple()
     apple.randomize_position(snake.positions)
