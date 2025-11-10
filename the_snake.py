@@ -1,7 +1,7 @@
 # pylint: disable=missing-docstring, no-member
 # flake8: noqa: D100, D101, D102, D103
 
-from random import choice, randint
+import random
 import pygame
 
 # Константы для размеров поля и сетки:
@@ -36,6 +36,7 @@ class GameObject:
         self.body_color = body_color
 
     def draw(self, surface):
+        """Отрисовка объекта на поверхности."""
         pass
 
 
@@ -52,14 +53,15 @@ class Apple(GameObject):
             snake_positions = []
         while True:
             pos = (
-                randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
+                random.randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                random.randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
             )
             if pos not in snake_positions:
                 self.position = pos
                 break
 
     def draw(self, surface):
+        """Отрисовка яблока."""
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(surface, self.body_color, rect)
         pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
@@ -77,9 +79,11 @@ class Snake(GameObject):
         self.last = None
 
     def get_head_position(self):
+        """Получение позиции головы змейки."""
         return self.positions[0]
 
     def update_direction(self):
+        """Обновление направления движения."""
         if self.next_direction:
             self.direction = self.next_direction
             self.next_direction = None
@@ -106,6 +110,7 @@ class Snake(GameObject):
         return True
 
     def draw(self, surface):
+        """Отрисовка змейки."""
         for position in self.positions[:-1]:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(surface, self.body_color, rect)
@@ -123,7 +128,7 @@ class Snake(GameObject):
         """Сбрасывает змейку в начальное состояние."""
         self.length = 1
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
-        self.direction = choice([UP, DOWN, LEFT, RIGHT])
+        self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
         self.next_direction = None
         self.last = None
 
