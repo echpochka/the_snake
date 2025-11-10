@@ -2,6 +2,7 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
+
 import pygame
 
 # Константы для размеров поля и сетки:
@@ -37,7 +38,6 @@ class GameObject:
 
     def draw(self, surface):
         """Отрисовка объекта на поверхности."""
-        pass
 
 
 class Apple(GameObject):
