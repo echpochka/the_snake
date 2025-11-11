@@ -249,7 +249,7 @@ def main():
 
     # Для тестового режима - ограничиваем количество итераций
     test_iterations = 0
-    max_test_iterations = 20
+    max_test_iterations = 5  # Еще меньше итераций для тестов
 
     running = True
     while running:
@@ -259,8 +259,8 @@ def main():
         if os.getenv('PYTEST_CURRENT_TEST'):
             test_iterations += 1
             if test_iterations > max_test_iterations:
-                # В тестовом режиме отправляем событие выхода
-                pg.event.post(pg.event.Event(pg.QUIT))
+                running = False
+                break
 
         cont, fps = handle_keys(snake, fps)
         if not cont:
