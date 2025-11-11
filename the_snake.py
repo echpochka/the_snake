@@ -4,7 +4,6 @@
 import random
 import pygame as pg
 
-
 # === Константы ===
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 GRID_SIZE = 20
@@ -187,7 +186,7 @@ def handle_keys(snake, current_fps):
 def show_victory_screen(screen):
     """Показывает экран победы."""
     screen.fill(BOARD_BACKGROUND_COLOR)
-    draw_text(screen, 'Победа!',
+    draw_text(screen, '🎉 Победа! 🎉',
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 20), 48)
     draw_text(screen, 'Нажмите ESC для выхода',
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30), 28)
