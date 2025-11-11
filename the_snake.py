@@ -209,14 +209,12 @@ def show_victory_screen(screen_surface):
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30), 28)
     pg.display.flip()
 
-    start_time = pg.time.get_ticks()
+    # В тестовом режиме сразу выходим
+    if os.getenv('PYTEST_CURRENT_TEST'):
+        return
+
     waiting = True
     while waiting:
-        current_time = pg.time.get_ticks()
-        # Автоматический выход через 2 секунды в тестовом режиме
-        if (os.getenv('PYTEST_CURRENT_TEST')
-                and current_time - start_time > 2000):
-            waiting = False
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 waiting = False
@@ -228,10 +226,12 @@ def show_victory_screen(screen_surface):
 # === Основная функция ===
 def main():
     """Главная функция игры."""
+    # Инициализация pygame
+    pg.init()
+
+    # Создание глобальных переменных
     # pylint: disable=global-statement
     global screen, clock
-
-    pg.init()
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
 
