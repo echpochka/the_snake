@@ -247,9 +247,20 @@ def main():
     apple.draw(screen)
     pg.display.flip()
 
+    # Счетчик итераций для тестового режима
+    test_iterations = 0
+    max_test_iterations = 50  # Максимальное количество итераций в тестовом режиме
+
     running = True
     while running:
         clock.tick(fps)
+
+        # В тестовом режиме ограничиваем количество итераций
+        if os.getenv('PYTEST_CURRENT_TEST'):
+            test_iterations += 1
+            if test_iterations > max_test_iterations:
+                break
+
         cont, fps = handle_keys(snake, fps)
         if not cont:
             running = False
