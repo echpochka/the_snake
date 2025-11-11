@@ -27,9 +27,9 @@ FPS_DEFAULT = 10
 FPS_MIN, FPS_MAX = 5, 30
 WIN_LENGTH = 20
 
-# Глобальные переменные для тестов
-screen = None  # pylint: disable=invalid-name
-clock = None   # pylint: disable=invalid-name
+# Глобальные переменные для тестов - инициализируем правильно
+screen = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))  # pylint: disable=invalid-name
+clock = pg.time.Clock()  # pylint: disable=invalid-name
 
 
 # === Вспомогательные функции ===
