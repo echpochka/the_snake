@@ -214,8 +214,8 @@ def show_victory_screen(screen_surface):
     while waiting:
         current_time = pg.time.get_ticks()
         # Автоматический выход через 2 секунды в тестовом режиме
-        if (os.getenv('PYTEST_CURRENT_TEST') and
-                current_time - start_time > 2000):
+        if (os.getenv('PYTEST_CURRENT_TEST')
+                and current_time - start_time > 2000):
             waiting = False
         for event in pg.event.get():
             if event.type == pg.QUIT:
