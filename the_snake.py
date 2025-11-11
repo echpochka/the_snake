@@ -240,7 +240,8 @@ def main():
     apple.draw(screen)
     pg.display.flip()
 
-    while True:
+    running = True
+    while running:
         clock.tick(fps)
         cont, fps = handle_keys(snake, fps)
         if not cont:
@@ -267,7 +268,8 @@ def main():
 
         if snake.length >= WIN_LENGTH:
             show_victory_screen(screen)
-            break
+            running = False
+            continue
 
         snake.draw_incremental(screen)
         apple.draw(screen)
