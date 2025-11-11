@@ -1,8 +1,10 @@
 # pylint: disable=missing-docstring, no-member
 # flake8: noqa: D100, D101, D102, D103
+# isort: skip_file
 
 import random
 import pygame as pg
+
 
 # === Константы ===
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -80,8 +82,10 @@ class Apple(GameObject):
         """Устанавливает случайную позицию яблока."""
         occupied_positions = occupied_positions or []
         while True:
-            pos = (random.randint(0, GRID_WIDTH - 1),
-                   random.randint(0, GRID_HEIGHT - 1))
+            pos = (
+                random.randint(0, GRID_WIDTH - 1),
+                random.randint(0, GRID_HEIGHT - 1)
+            )
             if pos not in occupied_positions:
                 self.position = pos
                 break
@@ -127,8 +131,10 @@ class Snake(GameObject):
         """Двигает змейку на одну клетку."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
-        new_head = ((head_x + dir_x) % GRID_WIDTH,
-                    (head_y + dir_y) % GRID_HEIGHT)
+        new_head = (
+            (head_x + dir_x) % GRID_WIDTH,
+            (head_y + dir_y) % GRID_HEIGHT
+        )
         self.positions.insert(0, new_head)
         self.position = new_head
 
