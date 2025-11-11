@@ -2,6 +2,7 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
+
 import pygame as pg
 
 # === Константы ===
@@ -197,7 +198,8 @@ def show_victory_screen(screen):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 waiting = False
-            elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+            elif (event.type == pg.KEYDOWN
+                  and event.key == pg.K_ESCAPE):
                 waiting = False
 
 
@@ -206,7 +208,9 @@ def main():
     """Главная функция игры."""
     pg.init()
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
+    pg.display.set_caption(
+        'Змейка — Esc для выхода | +/- скорость'
+    )
     clock = pg.time.Clock()
 
     snake = Snake()
