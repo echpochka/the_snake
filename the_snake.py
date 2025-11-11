@@ -1,10 +1,9 @@
 # pylint: disable=missing-docstring, no-member
 # flake8: noqa: D100, D101, D102, D103
+# isort: skip_file
 
 import random
-
 import pygame as pg
-
 
 # === Константы ===
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
