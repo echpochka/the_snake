@@ -2,6 +2,7 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
+
 import pygame as pg
 
 
@@ -27,8 +28,8 @@ FPS_MIN, FPS_MAX = 5, 30
 WIN_LENGTH = 20
 
 # Глобальные переменные для тестов
-screen = None
-clock = None
+screen = None  # pylint: disable=invalid-name
+clock = None   # pylint: disable=invalid-name
 
 
 # === Вспомогательные функции ===
