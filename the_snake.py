@@ -2,6 +2,7 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
+
 import pygame as pg
 
 
@@ -187,7 +188,7 @@ def handle_keys(snake, current_fps):
 def show_victory_screen(screen):
     """Показывает экран победы."""
     screen.fill(BOARD_BACKGROUND_COLOR)
-    draw_text(screen, '🎉 Победа! 🎉',
+    draw_text(screen, 'Победа!',
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 20), 48)
     draw_text(screen, 'Нажмите ESC для выхода',
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30), 28)
