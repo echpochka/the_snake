@@ -2,7 +2,6 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
-
 import pygame as pg
 
 
