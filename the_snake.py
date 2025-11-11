@@ -2,6 +2,7 @@
 # flake8: noqa: D100, D101, D102, D103
 
 import random
+
 import pygame as pg
 
 # === Константы ===
@@ -40,16 +41,19 @@ class GameObject:
     """Базовый игровой объект."""
 
     def __init__(self, body_color=None):
+        """Инициализация объекта с цветом тела и позицией."""
         self.body_color = body_color
         self.position = (0, 0)
 
     @staticmethod
     def to_pixels(grid_pos):
+        """Конвертирует координаты сетки в пиксели."""
         gx, gy = grid_pos
         return gx * GRID_SIZE, gy * GRID_SIZE
 
     @staticmethod
     def draw_cell(surface, grid_pos, color, border_color=BORDER_COLOR):
+        """Рисует одну ячейку на игровом поле."""
         px, py = GameObject.to_pixels(grid_pos)
         rect = pg.Rect(px, py, GRID_SIZE, GRID_SIZE)
         pg.draw.rect(surface, color, rect)
@@ -64,11 +68,13 @@ class Apple(GameObject):
     """Класс яблока."""
 
     def __init__(self, occupied_positions=None):
+        """Инициализация яблока с случайной позицией."""
         super().__init__(APPLE_COLOR)
         self.position = (0, 0)
         self.randomize_position(occupied_positions)
 
     def randomize_position(self, occupied_positions=None):
+        """Устанавливает случайную позицию яблока."""
         occupied_positions = occupied_positions or []
         while True:
             pos = (random.randint(0, GRID_WIDTH - 1),
@@ -78,6 +84,7 @@ class Apple(GameObject):
                 break
 
     def draw(self, surface):
+        """Отрисовывает яблоко на экране."""
         GameObject.draw_cell(surface, self.position, self.body_color)
 
 
@@ -86,6 +93,7 @@ class Snake(GameObject):
     """Класс змейки."""
 
     def __init__(self):
+        """Инициализация змейки."""
         super().__init__(SNAKE_COLOR)
         self.length = 1
         self.positions = []
@@ -94,6 +102,7 @@ class Snake(GameObject):
         self.reset()
 
     def reset(self):
+        """Сбрасывает состояние змейки."""
         self.length = 1
         center = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
         self.positions = [center]
@@ -102,14 +111,17 @@ class Snake(GameObject):
         self.last_removed = None
 
     def get_head_position(self):
+        """Возвращает позицию головы змейки."""
         return self.positions[0]
 
     def update_direction(self, new_direction):
+        """Меняет направление движения змейки."""
         if not (new_direction[0] == -self.direction[0]
                 and new_direction[1] == -self.direction[1]):
             self.direction = new_direction
 
     def move(self):
+        """Двигает змейку на одну клетку."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
         new_head = ((head_x + dir_x) % GRID_WIDTH,
@@ -123,13 +135,16 @@ class Snake(GameObject):
             self.last_removed = None
 
     def check_self_collision(self):
+        """Проверяет столкновение змейки с самой собой."""
         return self.get_head_position() in self.positions[1:]
 
     def draw_full(self, surface):
+        """Отрисовывает всю змейку."""
         for pos in self.positions:
             GameObject.draw_cell(surface, pos, self.body_color)
 
     def draw_incremental(self, surface):
+        """Инкрементально отрисовывает змейку."""
         GameObject.draw_cell(surface, self.get_head_position(),
                              self.body_color)
         if self.last_removed:
@@ -141,11 +156,13 @@ class Snake(GameObject):
             )
 
     def draw(self, surface):
+        """Метод draw для совместимости с тестами."""
         self.draw_full(surface)
 
 
 # === Обработка клавиш ===
 def handle_keys(snake, current_fps):
+    """Обрабатывает ввод с клавиатуры."""
     key_dir = {
         pg.K_UP: UP,
         pg.K_w: UP,
@@ -175,6 +192,7 @@ def handle_keys(snake, current_fps):
 
 # === Экран победы ===
 def show_victory_screen(screen_surface):
+    """Отображает экран победы."""
     screen_surface.fill(BOARD_BACKGROUND_COLOR)
     draw_text(screen_surface, 'Победа!',
               (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 20), 48)
@@ -194,6 +212,7 @@ def show_victory_screen(screen_surface):
 
 # === Основная функция ===
 def main():
+    """Главная функция игры."""
     pg.init()
     screen_surface = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
