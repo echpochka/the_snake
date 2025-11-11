@@ -1,6 +1,5 @@
 # pylint: disable=missing-docstring, no-member
 # flake8: noqa: D100, D101, D102, D103
-# isort: skip_file
 
 import random
 import pygame as pg
@@ -28,8 +27,8 @@ FPS_MIN, FPS_MAX = 5, 30
 WIN_LENGTH = 20
 
 # Глобальные переменные для тестов
-SCREEN = None
-CLOCK = None
+screen = None
+clock = None
 
 
 # === Вспомогательные функции ===
@@ -223,11 +222,11 @@ def show_victory_screen(screen_surface):
 def main():
     """Главная функция игры."""
     # pylint: disable=global-statement
-    global SCREEN, CLOCK
+    global screen, clock
 
     pg.init()
-    SCREEN = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    CLOCK = pg.time.Clock()
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pg.time.Clock()
 
     pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
 
@@ -236,13 +235,13 @@ def main():
     fps = FPS_DEFAULT
     score = 0
 
-    SCREEN.fill(BOARD_BACKGROUND_COLOR)
-    snake.draw_full(SCREEN)
-    apple.draw(SCREEN)
+    screen.fill(BOARD_BACKGROUND_COLOR)
+    snake.draw_full(screen)
+    apple.draw(screen)
     pg.display.flip()
 
     while True:
-        CLOCK.tick(fps)
+        clock.tick(fps)
         cont, fps = handle_keys(snake, fps)
         if not cont:
             break
@@ -254,9 +253,9 @@ def main():
             apple.randomize_position(snake.positions)
             score = 0
             fps = FPS_DEFAULT
-            SCREEN.fill(BOARD_BACKGROUND_COLOR)
-            snake.draw_full(SCREEN)
-            apple.draw(SCREEN)
+            screen.fill(BOARD_BACKGROUND_COLOR)
+            snake.draw_full(screen)
+            apple.draw(screen)
             pg.display.flip()
             continue
 
@@ -264,17 +263,17 @@ def main():
             snake.length += 1
             score += 1
             apple.randomize_position(snake.positions)
-            apple.draw(SCREEN)
+            apple.draw(screen)
 
         if snake.length >= WIN_LENGTH:
-            show_victory_screen(SCREEN)
+            show_victory_screen(screen)
             break
 
-        snake.draw_incremental(SCREEN)
-        apple.draw(SCREEN)
+        snake.draw_incremental(screen)
+        apple.draw(screen)
 
-        draw_text(SCREEN, f'Счёт: {score}', (60, 20), 22)
-        draw_text(SCREEN, f'Скорость: {fps}', (560, 20), 22)
+        draw_text(screen, f'Счёт: {score}', (60, 20), 22)
+        draw_text(screen, f'Скорость: {fps}', (560, 20), 22)
 
         pg.display.flip()
 
