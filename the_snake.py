@@ -27,9 +27,9 @@ FPS_DEFAULT = 10
 FPS_MIN, FPS_MAX = 5, 30
 WIN_LENGTH = 20
 
-# Глобальные переменные для тестов - инициализируем правильно
-screen = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))  # pylint: disable=invalid-name
-clock = pg.time.Clock()  # pylint: disable=invalid-name
+# Глобальные переменные для тестов
+screen = pg.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pg.time.Clock()
 
 
 # === Вспомогательные функции ===
@@ -123,8 +123,8 @@ class Snake(GameObject):
 
     def update_direction(self, new_direction):
         """Меняет направление движения змейки."""
-        if not (new_direction[0] == -self.direction[0]
-                and new_direction[1] == -self.direction[1]):
+        if not (new_direction[0] == -self.direction[0] and
+                new_direction[1] == -self.direction[1]):
             self.direction = new_direction
 
     def move(self):
@@ -218,8 +218,8 @@ def show_victory_screen(screen_surface):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 waiting = False
-            elif (event.type == pg.KEYDOWN
-                  and event.key == pg.K_ESCAPE):
+            elif (event.type == pg.KEYDOWN and
+                  event.key == pg.K_ESCAPE):
                 waiting = False
 
 
