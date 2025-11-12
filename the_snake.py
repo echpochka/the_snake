@@ -149,8 +149,9 @@ class Snake(GameObject):
         self.draw_cell(surface, self.get_head_position(), self.body_color)
         # Затираем хвост
         if self.last:
-            self.draw_cell(surface, self.last, BOARD_BACKGROUND_COLOR,
-                          BOARD_BACKGROUND_COLOR)
+            self.draw_cell(
+                surface, self.last, BOARD_BACKGROUND_COLOR, BOARD_BACKGROUND_COLOR
+            )
 
 
 # === Обработка клавиш ===
@@ -222,12 +223,13 @@ def main():
         # Победа
         if snake.length >= WIN_LENGTH:
             screen.fill(BOARD_BACKGROUND_COLOR)
-            draw_text(screen, "Победа!",
-                     (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48)
+            draw_text(screen, "Победа!", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48)
             win_text = "Нажмите ESC для выхода"
             draw_text(
-                screen, win_text,
-                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40), 28,
+                screen,
+                win_text,
+                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
+                28,
             )
             pg.display.flip()
             waiting = True
@@ -235,8 +237,7 @@ def main():
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
                         waiting = False
-                    elif (event.type == pg.KEYDOWN
-                          and event.key == pg.K_ESCAPE):
+                    elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                         waiting = False
             break
 
