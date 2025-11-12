@@ -226,14 +226,14 @@ def main():
             draw_text(
                 screen, 'Победа!',
                 (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48
-                )
+                    )
             win_text = 'Нажмите ESC для выхода'
             draw_text(
                 screen,
                 win_text,
                 (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
                 28,
-            )
+                    )
             pg.display.flip()
             waiting = True
             while waiting:
