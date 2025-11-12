@@ -223,7 +223,10 @@ def main():
 
         if snake.length >= WIN_LENGTH:
             screen.fill(BOARD_BACKGROUND_COLOR)
-            draw_text(screen, 'Победа!', (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48)
+            draw_text(
+                screen, 'Победа!',
+                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48
+                )
             win_text = 'Нажмите ESC для выхода'
             draw_text(
                 screen,
