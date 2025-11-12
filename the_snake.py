@@ -182,7 +182,7 @@ def main():
     """Главная функция игры."""
     pg.init()
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    caption = "Змейка — Esc для выхода | +/- скорость"
+    caption = 'Змейка — Esc для выхода | +/- скорость'
     pg.display.set_caption(caption)
 
     clock = pg.time.Clock()
@@ -224,9 +224,9 @@ def main():
         if snake.length >= WIN_LENGTH:
             screen.fill(BOARD_BACKGROUND_COLOR)
             draw_text(
-                screen, "Победа!", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48
+                screen, 'Победа!', (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48
             )
-            win_text = "Нажмите ESC для выхода"
+            win_text = 'Нажмите ESC для выхода'
             draw_text(
                 screen,
                 win_text,
@@ -246,12 +246,12 @@ def main():
         screen.fill(BOARD_BACKGROUND_COLOR)
         snake.draw(screen)
         apple.draw(screen)
-        draw_text(screen, f"Счёт: {score}", (60, 20), 22)
-        draw_text(screen, f"Скорость: {fps}", (560, 20), 22)
+        draw_text(screen, f'Счёт: {score}', (60, 20), 22)
+        draw_text(screen, f'Скорость: {fps}', (560, 20), 22)
         pg.display.flip()
 
     pg.quit()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
