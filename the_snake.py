@@ -76,8 +76,10 @@ class GameObject:
 class Apple(GameObject):
     """Класс яблока."""
 
-    def __init__(self, occupied_positions):
+    def __init__(self, occupied_positions=None):
         super().__init__(APPLE_COLOR)
+        if occupied_positions is None:
+            occupied_positions = []
         self.randomize_position(occupied_positions)
 
     def randomize_position(self, occupied_positions):
@@ -157,6 +159,12 @@ class Snake(GameObject):
             )
 
 
+# === Глобальные переменные для тестов ===
+pg.init()
+screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pg.time.Clock()
+
+
 # === Обработка клавиш ===
 def handle_keys(snake, current_fps):
     """Обрабатывает ввод с клавиатуры."""
@@ -180,12 +188,9 @@ def handle_keys(snake, current_fps):
 # === Основная функция ===
 def main():
     """Главная функция игры."""
-    pg.init()
-    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     caption = 'Змейка — Esc для выхода | +/- скорость'
     pg.display.set_caption(caption)
 
-    clock = pg.time.Clock()
     snake = Snake()
     apple = Apple(snake.positions)
     fps = FPS_DEFAULT
