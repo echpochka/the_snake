@@ -40,12 +40,12 @@ KEY_DIR = {
 
 
 # === Вспомогательная функция ===
-def draw_text(surface, text, position, size=24, color=TEXT_COLOR):
+def draw_text(text, position, size=24, color=TEXT_COLOR):
     """Отрисовывает текст на экране."""
     font = pg.font.Font(None, size)
     rendered = font.render(text, True, color)
     rect = rendered.get_rect(center=position)
-    surface.blit(rendered, rect)
+    screen.blit(rendered, rect)
 
 
 # === Базовый класс ===
@@ -56,7 +56,7 @@ class GameObject:
         self.body_color = body_color
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
 
-    def draw_cell(self, surface, position, color, border_color=BORDER_COLOR):
+    def draw_cell(self, position, color, border_color=BORDER_COLOR):
         """Рисует одну ячейку на экране."""
         rect = pg.Rect(
             position[0] * GRID_SIZE,
@@ -64,12 +64,14 @@ class GameObject:
             GRID_SIZE,
             GRID_SIZE,
         )
-        pg.draw.rect(surface, color, rect)
-        pg.draw.rect(surface, border_color, rect, 1)
+        pg.draw.rect(screen, color, rect)
+        pg.draw.rect(screen, border_color, rect, 1)
 
-    def draw(self, surface):
-        """Переопределяется в наследниках."""
-        raise NotImplementedError
+    def draw(self):
+        """Абстрактный метод для отрисовки объекта."""
+        raise NotImplementedError(
+            f'{self.__class__.__name__}.draw() не реализован.'
+        )
 
 
 # === Яблоко ===
@@ -78,12 +80,11 @@ class Apple(GameObject):
 
     def __init__(self, occupied_positions=None):
         super().__init__(APPLE_COLOR)
-        if occupied_positions is None:
-            occupied_positions = []
-        self.randomize_position(occupied_positions)
+        self.randomize_position(occupied_positions or [])
 
-    def randomize_position(self, occupied_positions):
+    def randomize_position(self, occupied_positions=None):
         """Устанавливает случайную позицию яблока."""
+        occupied_positions = occupied_positions or []
         while True:
             pos = (
                 random.randint(0, GRID_WIDTH - 1),
@@ -93,9 +94,9 @@ class Apple(GameObject):
                 self.position = pos
                 break
 
-    def draw(self, surface):
+    def draw(self):
         """Отрисовывает яблоко."""
-        self.draw_cell(surface, self.position, self.body_color)
+        self.draw_cell(self.position, self.body_color)
 
 
 # === Змейка ===
@@ -106,7 +107,7 @@ class Snake(GameObject):
         super().__init__(SNAKE_COLOR)
         self.length = 1
         self.positions = []
-        self.direction = None
+        self.direction = RIGHT  # Направление по умолчанию направо
         self.last = None
         self.reset()
 
@@ -115,7 +116,7 @@ class Snake(GameObject):
         self.length = 1
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
         self.positions = [self.position]
-        self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
+        self.direction = RIGHT
         self.last = None
 
     def get_head_position(self):
@@ -134,25 +135,22 @@ class Snake(GameObject):
         """Двигает змейку."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
-        new_head = (
+        self.position = (
             (head_x + dir_x) % GRID_WIDTH,
             (head_y + dir_y) % GRID_HEIGHT,
         )
-
-        self.positions.insert(0, new_head)
-        self.position = new_head
+        self.positions.insert(0, self.position)
 
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
             self.last = None
 
-    def draw(self, surface):
+    def draw(self):
         """Отрисовывает змейку."""
-        self.draw_cell(surface, self.get_head_position(), self.body_color)
+        self.draw_cell(self.get_head_position(), self.body_color)
         if self.last:
             self.draw_cell(
-                surface,
                 self.last,
                 BOARD_BACKGROUND_COLOR,
                 BOARD_BACKGROUND_COLOR,
@@ -169,7 +167,6 @@ clock = pg.time.Clock()
 def handle_keys(snake, current_fps):
     """Обрабатывает ввод с клавиатуры."""
     new_fps = current_fps
-
     for event in pg.event.get():
         if event.type == pg.QUIT:
             return False, new_fps
@@ -188,8 +185,7 @@ def handle_keys(snake, current_fps):
 # === Основная функция ===
 def main():
     """Главная функция игры."""
-    caption = 'Змейка — Esc для выхода | +/- скорость'
-    pg.display.set_caption(caption)
+    pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
 
     snake = Snake()
     apple = Apple(snake.positions)
@@ -197,12 +193,11 @@ def main():
     score = 0
 
     screen.fill(BOARD_BACKGROUND_COLOR)
-    snake.draw(screen)
-    apple.draw(screen)
+    snake.draw()
+    apple.draw()
     pg.display.flip()
 
-    running = True
-    while running:
+    while True:
         clock.tick(fps)
         cont, fps = handle_keys(snake, fps)
         if not cont:
@@ -216,43 +211,46 @@ def main():
             score = 0
             fps = FPS_DEFAULT
             screen.fill(BOARD_BACKGROUND_COLOR)
-            snake.draw(screen)
-            apple.draw(screen)
+            snake.draw()
+            apple.draw()
             pg.display.flip()
             continue
 
-        elif snake.get_head_position() == apple.position:
+        if snake.get_head_position() == apple.position:
             snake.length += 1
             score += 1
             apple.randomize_position(snake.positions)
 
-        if snake.length >= WIN_LENGTH:
-            screen.fill(BOARD_BACKGROUND_COLOR)
-            draw_text(
-                screen, 'Победа!', (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48
-            )
-            win_text = 'Нажмите ESC для выхода'
-            draw_text(
-                screen,
-                win_text,
-                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
-                28,
-            )
-            pg.display.flip()
-            waiting = True
-            while waiting:
-                for event in pg.event.get():
-                    if event.type == pg.QUIT:
-                        waiting = False
-                    elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                        waiting = False
-            break
+            if snake.length >= WIN_LENGTH:
+                screen.fill(BOARD_BACKGROUND_COLOR)
+                draw_text(
+                    'Победа!',
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
+                    48,
+                )
+                draw_text(
+                    'Нажмите ESC для выхода',
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
+                    28,
+                )
+                pg.display.flip()
+                while True:
+                    for event in pg.event.get():
+                        if event.type == pg.QUIT:
+                            pg.quit()
+                            return
+                        if (
+                            event.type == pg.KEYDOWN
+                            and event.key == pg.K_ESCAPE
+                        ):
+                            pg.quit()
+                            return
 
-        screen.fill(BOARD_BACKGROUND_COLOR)
-        snake.draw(screen)
-        apple.draw(screen)
-        draw_text(screen, f'Счёт: {score}', (60, 20), 22)
-        draw_text(screen, f'Скорость: {fps}', (560, 20), 22)
+        # Затираем только последний сегмент, не весь экран
+        snake.draw()
+        apple.draw()
+        draw_text(f'Счёт: {score}', (60, 20), 22)
+        draw_text(f'Скорость: {fps}', (560, 20), 22)
         pg.display.flip()
 
     pg.quit()
