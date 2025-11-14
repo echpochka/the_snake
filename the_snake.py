@@ -38,6 +38,11 @@ KEY_DIR = {
     pg.K_d: RIGHT,
 }
 
+# Инициализация pygame и создание глобальных переменных
+pg.init()
+screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pg.time.Clock()
+
 
 def draw_text(surface, text, position, size=24, color=TEXT_COLOR):
     """Отрисовывает текст на указанной поверхности."""
@@ -53,6 +58,10 @@ class GameObject:
     def __init__(self, body_color=None):
         self.body_color = body_color
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
+
+    def draw(self, surface):
+        """Отрисовывает объект на поверхности."""
+        self.draw_cell(surface, self.position, self.body_color)
 
     def draw_cell(self, surface, position, color, border_color=BORDER_COLOR):
         """Рисует одну ячейку. Позиция передаётся целиком."""
@@ -70,7 +79,7 @@ class GameObject:
 class Apple(GameObject):
     """Яблоко, которое должна съесть змейка."""
 
-    def __init__(self, occupied_positions):
+    def __init__(self, occupied_positions=()):
         super().__init__(APPLE_COLOR)
         self.randomize_position(occupied_positions)
 
@@ -84,10 +93,6 @@ class Apple(GameObject):
             if pos not in occupied_positions:
                 self.position = pos
                 break
-
-    def draw(self, surface):
-        """Отрисовывает яблоко."""
-        self.draw_cell(surface, self.position, self.body_color)
 
 
 class Snake(GameObject):
@@ -171,15 +176,7 @@ def handle_keys(snake, fps):
 
 def main():
     """Точка входа в игру."""
-    pg.init()
-    screen = pg.display.set_mode(
-        (SCREEN_WIDTH, SCREEN_HEIGHT)
-    )
-    clock = pg.time.Clock()
-
-    pg.display.set_caption(
-        'Змейка — Esc для выхода | +/- скорость'
-    )
+    pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
 
     snake = Snake()
     apple = Apple(snake.positions)
@@ -230,12 +227,10 @@ def main():
                 while True:
                     for event in pg.event.get():
                         if event.type == pg.QUIT:
-                            pg.quit()
                             return
 
                         if (event.type == pg.KEYDOWN
                                 and event.key == pg.K_ESCAPE):
-                            pg.quit()
                             return
 
         # Полная перерисовка кадра
@@ -248,8 +243,7 @@ def main():
 
         pg.display.flip()
 
-    pg.quit()
-
 
 if __name__ == '__main__':
     main()
+    pg.quit()
