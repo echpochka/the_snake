@@ -40,9 +40,7 @@ KEY_DIR = {
 
 
 def draw_text(surface, text, position, size=24, color=TEXT_COLOR):
-    """
-    Отрисовывает текст на указанной поверхности.
-    """
+    """Отрисовывает текст на указанной поверхности."""
     font = pg.font.Font(None, size)
     rendered = font.render(text, True, color)
     rect = rendered.get_rect(center=position)
@@ -50,19 +48,14 @@ def draw_text(surface, text, position, size=24, color=TEXT_COLOR):
 
 
 class GameObject:
-    """
-    Базовый объект игрового поля.
-    """
+    """Базовый объект игрового поля."""
 
     def __init__(self, body_color=None):
         self.body_color = body_color
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
 
-    def draw_cell(self, surface, position, color,
-                  border_color=BORDER_COLOR):
-        """
-        Рисует одну ячейку. Позиция передаётся целиком.
-        """
+    def draw_cell(self, surface, position, color, border_color=BORDER_COLOR):
+        """Рисует одну ячейку. Позиция передаётся целиком."""
         x, y = position
         rect = pg.Rect(
             x * GRID_SIZE,
@@ -75,18 +68,14 @@ class GameObject:
 
 
 class Apple(GameObject):
-    """
-    Яблоко, которое должна съесть змейка.
-    """
+    """Яблоко, которое должна съесть змейка."""
 
     def __init__(self, occupied_positions):
         super().__init__(APPLE_COLOR)
         self.randomize_position(occupied_positions)
 
     def randomize_position(self, occupied_positions):
-        """
-        Создаёт новую позицию, не совпадающую со змейкой.
-        """
+        """Создаёт новую позицию, не совпадающую со змейкой."""
         while True:
             pos = (
                 random.randint(0, GRID_WIDTH - 1),
@@ -97,16 +86,12 @@ class Apple(GameObject):
                 break
 
     def draw(self, surface):
-        """
-        Отрисовывает яблоко.
-        """
+        """Отрисовывает яблоко."""
         self.draw_cell(surface, self.position, self.body_color)
 
 
 class Snake(GameObject):
-    """
-    Змейка игрока.
-    """
+    """Змейка игрока."""
 
     def __init__(self):
         super().__init__(SNAKE_COLOR)
@@ -120,9 +105,7 @@ class Snake(GameObject):
         self.reset()
 
     def reset(self):
-        """
-        Сбрасывает состояние змейки.
-        """
+        """Сбрасывает состояние змейки."""
         self.length = 1
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
         self.positions = [self.position]
@@ -130,23 +113,17 @@ class Snake(GameObject):
         self.last = None
 
     def get_head_position(self):
-        """
-        Возвращает координаты головы змейки.
-        """
+        """Возвращает координаты головы змейки."""
         return self.positions[0]
 
     def update_direction(self, new_direction):
-        """
-        Меняет направление, запрещая разворот на 180.
-        """
-        if (new_direction[0] != -self.direction[0] or
-                new_direction[1] != -self.direction[1]):
+        """Меняет направление, запрещая разворот на 180."""
+        if (new_direction[0] != -self.direction[0]
+                or new_direction[1] != -self.direction[1]):
             self.direction = new_direction
 
     def move(self):
-        """
-        Передвигает змейку.
-        """
+        """Передвигает змейку."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
 
@@ -164,17 +141,13 @@ class Snake(GameObject):
             self.last = None
 
     def draw(self, surface):
-        """
-        Рисует всю змейку — полная перерисовка.
-        """
+        """Рисует всю змейку — полная перерисовка."""
         for segment in self.positions:
             self.draw_cell(surface, segment, self.body_color)
 
 
 def handle_keys(snake, fps):
-    """
-    Обрабатывает нажатия клавиш.
-    """
+    """Обрабатывает нажатия клавиш."""
     new_fps = fps
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -197,9 +170,7 @@ def handle_keys(snake, fps):
 
 
 def main():
-    """
-    Точка входа в игру.
-    """
+    """Точка входа в игру."""
     pg.init()
     screen = pg.display.set_mode(
         (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -251,8 +222,7 @@ def main():
                 draw_text(
                     screen,
                     'Нажмите ESC для выхода',
-                    (SCREEN_WIDTH // 2,
-                     SCREEN_HEIGHT // 2 + 40),
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
                     28,
                 )
                 pg.display.flip()
@@ -263,8 +233,8 @@ def main():
                             pg.quit()
                             return
 
-                        if (event.type == pg.KEYDOWN and
-                                event.key == pg.K_ESCAPE):
+                        if (event.type == pg.KEYDOWN
+                                and event.key == pg.K_ESCAPE):
                             pg.quit()
                             return
 
