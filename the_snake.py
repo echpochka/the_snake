@@ -126,16 +126,15 @@ class Snake(GameObject):
 
     def move(self):
         """Передвигает змейку."""
-        head = self.get_head_position()
-        dx, dy = self.direction
+        head_x, head_y = self.get_head_position()
+        dir_x, dir_y = self.direction
 
-        new_pos = (
-            (head[0] + dx) % GRID_WIDTH,
-            (head[1] + dy) % GRID_HEIGHT,
+        self.position = (
+            (head_x + dir_x) % GRID_WIDTH,
+            (head_y + dir_y) % GRID_HEIGHT,
         )
 
-        self.position = new_pos
-        self.positions.insert(0, new_pos)
+        self.positions.insert(0, self.position)
 
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
@@ -178,9 +177,17 @@ def handle_keys(snake, fps):
     return True, new_fps
 
 
+def handle_self_collision(snake, apple):
+    """Обрабатывает столкновение змейки с самой собой."""
+    if snake.get_head_position() in snake.positions[1:]:
+        snake.reset()
+        apple.randomize_position(snake.positions)
+        return True
+    return False
+
 def main():
     """Точка входа в игру."""
-    pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
+    pg.display.set_caption('Змейка — Esc | +/- скорость')
 
     snake = Snake()
     apple = Apple(snake.positions)
@@ -205,12 +212,9 @@ def main():
         snake.move()
 
         # Столкновение с собой
-        if snake.get_head_position() in snake.positions[1:]:
-            snake.reset()
-            apple.randomize_position(snake.positions)
+        if handle_self_collision(snake, apple):
             score = 0
             fps = FPS_DEFAULT
-
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.draw()
             apple.draw()
@@ -245,7 +249,10 @@ def main():
                     for event in pg.event.get():
                         if event.type == pg.QUIT:
                             return
-                        if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                        if (
+                            event.type == pg.KEYDOWN
+                            and event.key == pg.K_ESCAPE
+                        ):
                             return
 
         # Перерисовка
