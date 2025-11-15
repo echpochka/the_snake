@@ -91,7 +91,6 @@ class Apple(GameObject):
                 random.randint(0, GRID_WIDTH - 1),
                 random.randint(0, GRID_HEIGHT - 1),
             )
-
             if self.position not in occupied_positions:
                 break
 
@@ -167,10 +166,8 @@ def handle_keys(snake, fps):
 
             if event.key in KEY_DIR:
                 snake.update_direction(KEY_DIR[event.key])
-
             elif event.key in (pg.K_PLUS, pg.K_EQUALS):
                 new_fps = min(FPS_MAX, new_fps + 1)
-
             elif event.key in (pg.K_MINUS, pg.K_UNDERSCORE):
                 new_fps = max(FPS_MIN, new_fps - 1)
 
@@ -185,6 +182,27 @@ def handle_self_collision(snake, apple):
         return True
     return False
 
+
+def show_victory_screen():
+    """Показывает экран победы."""
+    screen.fill(BOARD_BACKGROUND_COLOR)
+
+    draw_text('Победа!', (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48)
+    draw_text(
+        'Нажмите ESC для выхода',
+        (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
+        28,
+    )
+    pg.display.flip()
+
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                return
+            if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                return
+
+
 def main():
     """Точка входа в игру."""
     pg.display.set_caption('Змейка — Esc | +/- скорость')
@@ -198,7 +216,7 @@ def main():
     screen.fill(BOARD_BACKGROUND_COLOR)
     snake.draw()
     apple.draw()
-    draw_text(f'Счёт: {score}', (60, 20), 22)
+    draw_text('Счёт: 0', (60, 20), 22)
     draw_text(f'Скорость: {fps}', (560, 20), 22)
     pg.display.flip()
 
@@ -231,29 +249,8 @@ def main():
 
             # Победа
             if snake.length >= WIN_LENGTH:
-                screen.fill(BOARD_BACKGROUND_COLOR)
-
-                draw_text(
-                    'Победа!',
-                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
-                    48,
-                )
-                draw_text(
-                    'Нажмите ESC для выхода',
-                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
-                    28,
-                )
-                pg.display.flip()
-
-                while True:
-                    for event in pg.event.get():
-                        if event.type == pg.QUIT:
-                            return
-                        if (
-                            event.type == pg.KEYDOWN
-                            and event.key == pg.K_ESCAPE
-                        ):
-                            return
+                show_victory_screen()
+                return
 
         # Перерисовка
         if snake.last is not None:
