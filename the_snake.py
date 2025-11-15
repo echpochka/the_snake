@@ -230,13 +230,11 @@ def main():
                 screen.fill(BOARD_BACKGROUND_COLOR)
 
                 draw_text(
-                    screen,
                     'Победа!',
                     (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
                     48,
                 )
                 draw_text(
-                    screen,
                     'Нажмите ESC для выхода',
                     (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
                     28,
@@ -247,8 +245,7 @@ def main():
                     for event in pg.event.get():
                         if event.type == pg.QUIT:
                             return
-                        if (event.type == pg.KEYDOWN and
-                                event.key == pg.K_ESCAPE):
+                        if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                             return
 
         # Перерисовка
