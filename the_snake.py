@@ -61,7 +61,7 @@ def draw_text(text, position, size=24, color=TEXT_COLOR):
 class GameObject:
     """Базовый объект игрового поля."""
 
-    def __init__(self, color):
+    def __init__(self, color=SNAKE_COLOR):
         self.body_color = color
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
 
@@ -80,8 +80,10 @@ class GameObject:
 class Apple(GameObject):
     """Яблоко, которое должна съесть змейка."""
 
-    def __init__(self, occupied_positions):
+    def __init__(self, occupied_positions=None):
         super().__init__(APPLE_COLOR)
+        if occupied_positions is None:
+            occupied_positions = []
         self.randomize_position(occupied_positions)
 
     def randomize_position(self, occupied_positions):
