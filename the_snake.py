@@ -60,6 +60,7 @@ def draw_text(text, position, size=24, color=TEXT_COLOR):
 
 class GameObject:
     """Базовый объект игрового поля."""
+
     def __init__(self, color):
         self.body_color = color
         self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
@@ -78,6 +79,7 @@ class GameObject:
 
 class Apple(GameObject):
     """Яблоко, которое должна съесть змейка."""
+
     def __init__(self, occupied_positions):
         super().__init__(APPLE_COLOR)
         self.randomize_position(occupied_positions)
@@ -96,6 +98,7 @@ class Apple(GameObject):
 
 class Snake(GameObject):
     """Змейка игрока."""
+
     def __init__(self):
         super().__init__(SNAKE_COLOR)
         self.length = 1
@@ -140,12 +143,13 @@ class Snake(GameObject):
             self.last = None
 
     def draw(self):
-        """Рисует всю змейку - полная перерисовка."""
+        """Рисует всю змейку."""
         for segment in self.positions:
             self.draw_cell(segment, self.body_color)
 
 
 def erase_cell(pos):
+    """Стирает клетку на экране."""
     px, py = grid_to_pixels(pos)
     rect = pg.Rect(px, py, GRID_SIZE, GRID_SIZE)
     pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
@@ -176,7 +180,7 @@ def handle_keys(snake, fps):
 
 def main():
     """Точка входа в игру."""
-    pg.display.set_caption('Змейка — ESC для выхода | +/- скорость')
+    pg.display.set_caption('Змейка — Esc для выхода | +/- скорость')
 
     snake = Snake()
     apple = Apple(snake.positions)
@@ -187,6 +191,8 @@ def main():
     screen.fill(BOARD_BACKGROUND_COLOR)
     snake.draw()
     apple.draw()
+    draw_text(f'Счёт: {score}', (60, 20), 22)
+    draw_text(f'Скорость: {fps}', (560, 20), 22)
     pg.display.flip()
 
     while True:
@@ -197,10 +203,9 @@ def main():
             break
 
         snake.move()
-        head = snake.get_head_position()
 
         # Столкновение с собой
-        if head in snake.positions[1:]:
+        if snake.get_head_position() in snake.positions[1:]:
             snake.reset()
             apple.randomize_position(snake.positions)
             score = 0
@@ -215,7 +220,7 @@ def main():
             continue
 
         # Яблоко
-        elif head == apple.position:
+        elif snake.get_head_position() == apple.position:
             snake.length += 1
             score += 1
             apple.randomize_position(snake.positions)
@@ -223,22 +228,30 @@ def main():
             # Победа
             if snake.length >= WIN_LENGTH:
                 screen.fill(BOARD_BACKGROUND_COLOR)
-                draw_text('Победа!',
-                          (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), 48)
-                draw_text('ESC — выход',
-                          (SCREEN_WIDTH // 2,
-                           SCREEN_HEIGHT // 2 + 40), 28)
+
+                draw_text(
+                    screen,
+                    'Победа!',
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
+                    48,
+                )
+                draw_text(
+                    screen,
+                    'Нажмите ESC для выхода',
+                    (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40),
+                    28,
+                )
                 pg.display.flip()
 
                 while True:
                     for event in pg.event.get():
                         if event.type == pg.QUIT:
                             return
-                        if (event.type == pg.KEYDOWN
-                                and event.key == pg.K_ESCAPE):
+                        if (event.type == pg.KEYDOWN and
+                                event.key == pg.K_ESCAPE):
                             return
 
-        # Стирание последнего сегмента
+        # Перерисовка
         if snake.last is not None:
             erase_cell(snake.last)
 
