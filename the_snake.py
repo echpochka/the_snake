@@ -71,8 +71,10 @@ class GameObject:
 
     def draw_cell(self, position, color, border_color=BORDER_COLOR):
         """Рисует одну ячейку."""
-        px, py = grid_to_pixels(position)
-        rect = pg.Rect(px, py, GRID_SIZE, GRID_SIZE)
+        rect = pg.Rect(
+            grid_to_pixels(position),
+            (GRID_SIZE, GRID_SIZE),
+        )
         pg.draw.rect(screen, color, rect)
         pg.draw.rect(screen, border_color, rect, 1)
 
@@ -82,9 +84,7 @@ class Apple(GameObject):
 
     def __init__(self, occupied_positions=None):
         super().__init__(APPLE_COLOR)
-        if occupied_positions is None:
-            occupied_positions = []
-        self.randomize_position(occupied_positions)
+        self.randomize_position(occupied_positions or [])
 
     def randomize_position(self, occupied_positions):
         """Создает новую позицию, не совпдадающую со змейкой."""
@@ -100,13 +100,14 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Змейка игрока."""
 
+    last = None  # без этого 141 и 143 строки ругаются,
+    # что self.last появляются сначала в move(),
+    # а не в __init__, я не знаю как еще это исправить.
+
     def __init__(self):
         super().__init__(SNAKE_COLOR)
-        self.length = 1
-        self.positions = [self.position]
-        self.direction = RIGHT
-        self.last = None
         self.reset()
+        self.direction = RIGHT
 
     def reset(self):
         """Сбрасывает состояние змейки."""
@@ -144,15 +145,14 @@ class Snake(GameObject):
 
     def draw(self):
         """Рисует всю змейку."""
+        if self.last is not None:
+            rect = pg.Rect(
+                grid_to_pixels(self.last),
+                (GRID_SIZE, GRID_SIZE),
+            )
+            pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
         for segment in self.positions:
             self.draw_cell(segment, self.body_color)
-
-
-def erase_cell(pos):
-    """Стирает клетку на экране."""
-    px, py = grid_to_pixels(pos)
-    rect = pg.Rect(px, py, GRID_SIZE, GRID_SIZE)
-    pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
 
 
 def handle_keys(snake, fps):
@@ -174,15 +174,6 @@ def handle_keys(snake, fps):
                 new_fps = max(FPS_MIN, new_fps - 1)
 
     return True, new_fps
-
-
-def handle_self_collision(snake, apple):
-    """Обрабатывает столкновение змейки с самой собой."""
-    if snake.get_head_position() in snake.positions[1:]:
-        snake.reset()
-        apple.randomize_position(snake.positions)
-        return True
-    return False
 
 
 def show_victory_screen():
@@ -215,6 +206,7 @@ def main():
     fps = FPS_DEFAULT
     score = 0
 
+    # Первый кадр
     screen.fill(BOARD_BACKGROUND_COLOR)
     snake.draw()
     apple.draw()
@@ -225,16 +217,18 @@ def main():
     while True:
         clock.tick(fps)
         cont, fps = handle_keys(snake, fps)
-
         if not cont:
             break
 
         snake.move()
 
         # Столкновение с собой
-        if handle_self_collision(snake, apple):
+        if snake.get_head_position() in snake.positions[1:]:
+            snake.reset()
+            apple.randomize_position(snake.positions)
             score = 0
             fps = FPS_DEFAULT
+
             screen.fill(BOARD_BACKGROUND_COLOR)
             snake.draw()
             apple.draw()
@@ -244,7 +238,7 @@ def main():
             continue
 
         # Яблоко
-        elif snake.get_head_position() == apple.position:
+        if snake.get_head_position() == apple.position:
             snake.length += 1
             score += 1
             apple.randomize_position(snake.positions)
@@ -252,18 +246,13 @@ def main():
             # Победа
             if snake.length >= WIN_LENGTH:
                 show_victory_screen()
-                return
+                break
 
-        # Перерисовка
-        if snake.last is not None:
-            erase_cell(snake.last)
-
+        # Проверяю, будет ли двигаться змейка после этого
         snake.draw()
         apple.draw()
-
         draw_text(f'Счёт: {score}', (60, 20), 22)
         draw_text(f'Скорость: {fps}', (560, 20), 22)
-
         pg.display.flip()
 
 
