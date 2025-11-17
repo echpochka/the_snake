@@ -44,12 +44,6 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pg.time.Clock()
 
 
-def grid_to_pixels(position):
-    """Преобразовывает координаты клетки в координаты пикселей."""
-    x, y = position
-    return x * GRID_SIZE, y * GRID_SIZE
-
-
 def draw_text(text, position, size=24, color=TEXT_COLOR):
     """Отрисовка текста."""
     font = pg.font.Font(None, size)
@@ -63,7 +57,7 @@ class GameObject:
 
     def __init__(self, color=SNAKE_COLOR):
         self.body_color = color
-        self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
+        self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
     def draw(self):
         """Отрисовывает объект на поверхности."""
@@ -72,7 +66,7 @@ class GameObject:
     def draw_cell(self, position, color, border_color=BORDER_COLOR):
         """Рисует одну ячейку."""
         rect = pg.Rect(
-            grid_to_pixels(position),
+            position,
             (GRID_SIZE, GRID_SIZE),
         )
         pg.draw.rect(screen, color, rect)
@@ -90,8 +84,8 @@ class Apple(GameObject):
         """Создает новую позицию, не совпдадающую со змейкой."""
         while True:
             self.position = (
-                random.randint(0, GRID_WIDTH - 1),
-                random.randint(0, GRID_HEIGHT - 1),
+                random.randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                random.randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
             )
             if self.position not in occupied_positions:
                 break
@@ -99,10 +93,6 @@ class Apple(GameObject):
 
 class Snake(GameObject):
     """Змейка игрока."""
-
-    last = None  # без этого 141 и 143 строки ругаются,
-    # что self.last появляются сначала в move(),
-    # а не в __init__, я не знаю как еще это исправить.
 
     def __init__(self):
         super().__init__(SNAKE_COLOR)
@@ -112,7 +102,7 @@ class Snake(GameObject):
     def reset(self):
         """Сбрасывает состояние змейки."""
         self.length = 1
-        self.position = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
+        self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [self.position]
         self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
         self.last = None
@@ -132,8 +122,8 @@ class Snake(GameObject):
         dir_x, dir_y = self.direction
 
         self.position = (
-            (head_x + dir_x) % GRID_WIDTH,
-            (head_y + dir_y) % GRID_HEIGHT,
+            (head_x + (dir_x * GRID_SIZE)) % SCREEN_WIDTH,
+            (head_y + (dir_y * GRID_SIZE)) % SCREEN_HEIGHT,
         )
 
         self.positions.insert(0, self.position)
@@ -145,11 +135,8 @@ class Snake(GameObject):
 
     def draw(self):
         """Рисует всю змейку."""
-        if self.last is not None:
-            rect = pg.Rect(
-                grid_to_pixels(self.last),
-                (GRID_SIZE, GRID_SIZE),
-            )
+        if self.last:
+            rect = pg.Rect(self.last, (GRID_SIZE, GRID_SIZE))
             pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
         for segment in self.positions:
             self.draw_cell(segment, self.body_color)
@@ -207,9 +194,6 @@ def main():
     score = 0
 
     # Первый кадр
-    screen.fill(BOARD_BACKGROUND_COLOR)
-    snake.draw()
-    apple.draw()
     draw_text('Счёт: 0', (60, 20), 22)
     draw_text(f'Скорость: {fps}', (560, 20), 22)
     pg.display.flip()
@@ -251,6 +235,8 @@ def main():
         # Проверяю, будет ли двигаться змейка после этого
         snake.draw()
         apple.draw()
+        pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, pg.Rect(10, 5, 120, 30))
+        pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, pg.Rect(480, 5, 150, 30))
         draw_text(f'Счёт: {score}', (60, 20), 22)
         draw_text(f'Скорость: {fps}', (560, 20), 22)
         pg.display.flip()
